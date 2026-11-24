@@ -13,6 +13,11 @@
 | M5 运行对账 | 对照输入、采信和隔离行 | `POST /api/stages/balance` | `app/modules/reconcile.py` | `tests/test_reconcile.py` |
 | M6 批次复核 | 执行批次并签发或暂缓 | `POST /api/runs、PATCH /api/runs/<id>` | `app/review/service.py` | `tests/test_review.py` |
 | M7 证据交付 | 下载复核清单 | `GET /api/runs/<id>/evidence` | `app/evidence/render.py` | `tests/test_evidence.py` |
+| M8 修订裁决 | 合并迟到修订并裁决后继关系 | `POST、GET /api/runs/<id>/revisions` | `app/review/revision.py` | `tests/test_revision.py` |
+
+## 修订裁决规则
+
+已签发批次保留原有证据不变。修订文件按记录键覆盖该批次的有效行后重算，逐组比较业务结论：仅当峰值读数或分组判定改变时，生成待复核的后继批次（`kind=REVISION`，`base_id` 指向原批次）；仅隔离行、备注或不改变结论的读数变化登记为无影响并保持当前签发批次。同一修订文件以 `sha256` 去重，重复执行不新增后继批次，也不改写已有差异记录与批次关系。
 
 ## 输入陷阱
 

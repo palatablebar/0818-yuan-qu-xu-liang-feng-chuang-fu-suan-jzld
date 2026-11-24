@@ -11,6 +11,8 @@ LABELS = {
     "ROW_LIMIT": "文件超过 2000 行",
     "FILE_REQUIRED": "请选择 CSV 文件",
     "RUN_NOT_FOUND": "批次不存在",
+    "REVISION_BASE_PENDING": "只有已签发批次可以接收修订",
+    "REVISION_BASE_UNSUPPORTED": "该批次缺少可合并的有效行",
     "REVIEW_FIELDS": "请填写 3 至 200 字复核意见",
     "STALE_REVIEW": "批次已更新，请刷新",
     "RUN_FINALIZED": "批次已签发",
@@ -27,7 +29,14 @@ def response(error):
         if code in {"RUN_NOT_FOUND", "SAMPLE_UNKNOWN", "STAGE_UNKNOWN"}
         else (
             409
-            if code in {"STALE_REVIEW", "RUN_FINALIZED", "UNRESOLVED_ISSUES"}
+            if code
+            in {
+                "STALE_REVIEW",
+                "RUN_FINALIZED",
+                "UNRESOLVED_ISSUES",
+                "REVISION_BASE_PENDING",
+                "REVISION_BASE_UNSUPPORTED",
+            }
             else 413 if code == "FILE_TOO_LARGE" else 422
         )
     )

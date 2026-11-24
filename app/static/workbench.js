@@ -1,5 +1,5 @@
 import {request} from './client.js';
-import {snapshot, history} from './view.js';
+import {snapshot, history, revisions} from './view.js';
 import {visualize} from './plots.js';
 
 const form = document.querySelector('#source');
@@ -9,6 +9,8 @@ const status = document.querySelector('#notice');
 const detail = document.querySelector('#review');
 const evidence = document.querySelector('#evidence');
 const stages = [...document.querySelectorAll('[data-stage]')];
+const revisionForm = document.querySelector('#revision');
+const revisionFile = document.querySelector('#revision-file');
 let stage = 'balance';
 let report, selected, batch, running = false;
 
@@ -50,6 +52,8 @@ function show(payload, committed = false) {
 async function refresh() {
   const data = await request('/api/runs');
   history(data.items, batch?.id);
+  const listed = batch ? await request(`/api/runs/${batch.id}/revisions`) : {items:[]};
+  revisions(listed.items, batch);
 }
 
 async function perform(action) {
@@ -84,6 +88,19 @@ form.addEventListener('submit', event => {
 const filename = document.querySelector('#file-name');
 profile.addEventListener('change',()=>{file.value=''; filename.textContent=''; preview(stage);});
 file.addEventListener('change',()=>{filename.textContent=file.files[0]?.name || ''; preview(stage);});
+const revisionName = document.querySelector('#revision-name');
+revisionFile.addEventListener('change',()=>{revisionName.textContent=revisionFile.files[0]?.name || '';});
+revisionForm.addEventListener('submit',event=>{
+  event.preventDefault();
+  if (!revisionFile.files.length) { announce('请选择修订 CSV 文件',true); return; }
+  perform(async()=>{
+    const data=new FormData(); data.append('file',revisionFile.files[0]);
+    const result=await request(`/api/runs/${batch.id}/revisions`,{method:'POST',body:data});
+    revisionFile.value=''; revisionName.textContent='';
+    announce(result.outcome==='SUCCESSOR'?'修订改变结论，已生成待复核后继批次':'修订无影响，保持原签发批次');
+    await refresh();
+  });
+});
 document.querySelector('#rows').addEventListener('click',event=>{
   const button = event.target.closest('[data-case]');
   if (button) { selected = button.dataset.case; draw(); document.querySelector(`[data-case="${CSS.escape(selected)}"]`).focus(); }

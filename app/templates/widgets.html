@@ -34,6 +34,16 @@
 {% endmacro %}
 {% macro archive() %}
 <aside class="panel archive"><h2>批次复核</h2><ul id="history"></ul>
+  <section id="revisions" hidden aria-labelledby="revisions-title">
+    <h3 id="revisions-title">修订影响</h3>
+    <form id="revision" aria-label="上传修订文件">
+      <label for="revision-file" class="file">追加修订 CSV</label>
+      <input id="revision-file" name="revision" type="file" accept=".csv,text/csv">
+      <span id="revision-name" aria-live="polite"></span>
+      <button type="submit" class="action">裁决修订</button>
+    </form>
+    <ul id="revision-results" aria-live="polite"></ul>
+  </section>
   <form id="review" hidden>
     <p id="run-status"></p><label for="note">复核意见</label>
     <textarea id="note" name="note" minlength="3" maxlength="200" required></textarea>

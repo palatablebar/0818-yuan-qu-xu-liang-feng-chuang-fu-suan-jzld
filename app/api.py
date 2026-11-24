@@ -4,7 +4,7 @@ from app.business import DomainIssue
 from app.evidence.render import artifact
 from app.inputs import read_input
 from app.modules.pipeline import run
-from app.review.service import execute, review
+from app.review.service import execute, review, revise
 
 api = Blueprint("api", __name__, url_prefix="/api")
 STAGES = {"intake": 1, "prepare": 2, "calculate": 3, "policy": 4, "balance": 5}
@@ -44,3 +44,12 @@ def export(run_id):
             "Cache-Control": "no-store",
         },
     )
+
+
+@api.route("/runs/<run_id>/revisions", methods=["GET", "POST"])
+def run_revisions(run_id):
+    store = current_app.extensions["runs"]
+    if request.method == "GET":
+        store.load(run_id)
+        return jsonify(items=store.revisions(run_id))
+    return jsonify(revise(store, run_id, read_input()))

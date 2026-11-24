@@ -34,6 +34,13 @@ body.wave {margin:0;background:var(--bg);color:var(--ink);font:var(--size)/1.55 
 .wave .badge {color:var(--alert);font-size:.83em;padding:2px 4px;white-space:nowrap} .wave .badge:is([data-result="READY"],[data-result="APPROVED"]) {color:var(--accent)}
 .wave #detail {margin:0;max-height:230px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font: .91em/1.5 var(--font-num)}
 .wave #history {list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:var(--gap);margin:0} .wave #history li {display:flex;align-items:center}
+.wave #revisions {margin-top:14px} .wave #revisions h3 {font-size:14px;margin:0 0 8px}
+.wave #revision {display:flex;flex-wrap:wrap;gap:var(--gap);align-items:center}
+.wave #revision input {position:absolute;width:1px;height:1px;opacity:0}
+.wave #revision:has(input:focus-visible) .file {outline:2px solid var(--accent);outline-offset:3px}
+.wave #revision-results {list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px}
+.wave #revision-results li {display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1px solid var(--line);border-radius:var(--radius);padding:6px 9px}
+.wave #revision-results li[data-outcome="NO_IMPACT"] {color:var(--sub)}
 .wave #review {margin-top:14px;max-width:580px} .wave textarea {display:block;width:100%;min-height:54px;cursor:text}
 .wave .review-actions {display:flex;gap:6px;margin:8px 0}
 .wave .statusbar {grid-area:statusbar;display:flex;gap:14px;justify-content:space-between;border-top:1px solid var(--line);padding:10px 0}

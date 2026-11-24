@@ -24,8 +24,12 @@ def evaluate(rows, stage):
     return case
 
 
-def run(data, stage=5):
-    intake = inspect(data)
+def assemble(intake, stage=5):
+    """Build the stage report from an already inspected intake.
+
+    Revision handling needs to evaluate merged effective rows that never
+    existed as one source file, so the intake/report split is explicit.
+    """
     output = {"intake": {k: v for k, v in intake.items() if k != "rows"}}
     if stage == 1:
         return output
@@ -34,3 +38,7 @@ def run(data, stage=5):
     if stage >= 5:
         output["balance"] = balance(intake, cases)
     return output
+
+
+def run(data, stage=5):
+    return assemble(inspect(data), stage)
